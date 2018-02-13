@@ -1,0 +1,8 @@
+.table-head {
+	background: #343a40;
+	margin-top: 15px;
+}
+.table-head > div {
+	color: #fff;
+	padding: 15px;
+}
