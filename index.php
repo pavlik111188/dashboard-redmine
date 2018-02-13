@@ -1,165 +1,25 @@
-
 <?php
-require_once __DIR__ . '/vendor/autoload.php';
+require_once 'common.php';
 
-
-define('APPLICATION_NAME', 'Google Sheets API PHP Quickstart');
-define('CREDENTIALS_PATH', 'token.json');
-define('CLIENT_SECRET_PATH', __DIR__ . '/client_secret.json');
-// If modifying these scopes, delete your previously saved credentials
-// at ~/.credentials/sheets.googleapis.com-php-quickstart.json
-define('SCOPES', implode(' ', array(
-  Google_Service_Sheets::SPREADSHEETS)
-));
-
-/*if (php_sapi_name() != 'cli') {
-  throw new Exception('This application must be run on the command line.');
-}*/
-
-/**
- * Returns an authorized API client.
- * @return Google_Client the authorized client object
- */
-function getClient() {
-  $client = new Google_Client();
-  $client->setApplicationName(APPLICATION_NAME);
-  $client->setScopes(SCOPES);
-  $client->setAuthConfig(CLIENT_SECRET_PATH);
-  $client->setAccessType('offline');
-  // $client->setAprovalPromt('force');
-
-  // Load previously authorized credentials from a file.
-  $credentialsPath = expandHomeDirectory(CREDENTIALS_PATH);
-  if (file_exists($credentialsPath)) {
-    $accessToken = json_decode(file_get_contents($credentialsPath), true);
-  } else {
-    // Request authorization from the user.
-    $authUrl = $client->createAuthUrl();
-    printf("Open the following link in your browser:\n%s\n", $authUrl);
-    print 'Enter verification code: ';
-    $authCode = trim(fgets(STDIN));
-
-    // Exchange authorization code for an access token.
-    $accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
-
-    // Store the credentials to disk.
-    if(!file_exists(dirname($credentialsPath))) {
-      mkdir(dirname($credentialsPath), 0700, true);
-    }
-    file_put_contents($credentialsPath, json_encode($accessToken));
-    printf("Credentials saved to %s\n", $credentialsPath);
-  }
-  $client->setAccessToken($accessToken);
-
-  // Refresh the token if it's expired.
-  if ($client->isAccessTokenExpired()) {
-    $refresh_token = $accessToken['refresh_token'];
-
-    $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-    
-    $new_token = $client->getAccessToken();
-    if(!isset($new_token['refresh_token'])) {
-      $new_token['refresh_token'] = $refresh_token;
-    }
-
-    file_put_contents($credentialsPath, json_encode($new_token));
-  }
-  return $client;
+$g = new GoogleSheets($config['googleAppName'], $config['googleCredentialsFile'], $config['googleClientSecretFile']);
+if (!$g->isReady()) {
+    $_SESSION['auth_url'] = $g->getAuthUrl();
+    header("Location: token.php");
+    die();
 }
+$contact = [
+        1,
+        'Pavlo',
+        'Salo',
+        'Pavlo',
+        'Salo',
+        'Pavlo',
+        'Salo',
+        'subscribed'
+    ];
+// $g->append($config['googleListId'], $config['googleSheetRange'], $contact);
+    $get_result = $g->getRows($config['googleListId'], 'Продажи 1!B3:F');
 
-/**
- * Expands the home directory alias '~' to the full path.
- * @param string $path the path to expand.
- * @return string the expanded path.
- */
-function expandHomeDirectory($path) {
-  $homeDirectory = getenv('HOME');
-  if (empty($homeDirectory)) {
-    $homeDirectory = getenv('HOMEDRIVE') . getenv('HOMEPATH');
-  }
-  return str_replace('~', realpath($homeDirectory), $path);
-}
-
-// Get the API client and construct the service object.
-$client = getClient();
-$service = new Google_Service_Sheets($client);
-
-function getValues($spreadsheetId, $range, $service) {
-  $response = $service->spreadsheets_values->get($spreadsheetId, $range);
-  $values = $response->getValues() ? $response->getValues() : [];
-  $result = '';
-  if (!$values && count($values) == 0) {
-    $result = "No data found.";
-  } else {
-    foreach ($values as $row => $value) {      
-      $result .= '<tr>';
-      $result .= '<td>' . $value[0] . '</td>';
-      $result .= '<td>' . $value[1] . '</td>';
-      $result .= '<td>' . $value[2] . '</td>';
-      $result .= '<td>' . $value[3] . '</td>';
-      $result .= '<td>' . $value[4] . '</td>';
-      $result .= '</tr>';
-    }
-  }
-  return $result;
-}
-
-function addRowToSpreadsheet($sheetsService, $spreadsheetId, $sheetId, $newValues = []) {
-    // Build the CellData array
-    $values = [];
-    foreach ($newValues AS $d) {
-        $cellData = new Google_Service_Sheets_CellData();
-        $value = new Google_Service_Sheets_ExtendedValue();
-        $value->setStringValue($d);
-        $cellData->setUserEnteredValue($value);
-        $values[] = $cellData;
-    }
-    // Build the RowData
-    $rowData = new Google_Service_Sheets_RowData();
-    $rowData->setValues($values);
-    // Prepare the request
-    $append_request = new Google_Service_Sheets_AppendCellsRequest();
-    $append_request->setSheetId($sheetId);
-    $append_request->setRows($rowData);
-    $append_request->setFields('USER_ENTERED');
-
-    // Set the request
-    $request = new Google_Service_Sheets_Request();
-    $request->setAppendCells($append_request);
-    var_dump($request);
-    // Add the request to the requests array
-    $requests = array();
-    $requests[] = $request;
-    // Prepare the update
-    $batchUpdateRequest = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest(array(
-        'requests' => $requests
-    ));
-
-    try {
-        // Execute the request
-        $response = $sheetsService->spreadsheets->batchUpdate($spreadsheetId, $batchUpdateRequest);
-        if ($response->valid()) {            
-            return true;// Success, the row has been added
-        }
-    } catch (Exception $e) {        
-        error_log($e->getMessage());// Something went wrong
-    }
-
-    return false;
-}
-
-$val = array(
-    array(
-        "Mickey","Mouse " . rand(11111,99999)
-    ),
-    array(
-      "Donald","Duck"
-    )
-);
-echo '<pre>';
-addRowToSpreadsheet($service, '1Ygd6cEvi0tcGa3GF11hUIZfomh0Ms9r1mZN-MfcqruE', 'Sales 3', $val);
-// addRowToSpreadsheet($service, '1Ygd6cEvi0tcGa3GF11hUIZfomh0Ms9r1mZN-MfcqruE', 1, $val);
-echo '</pre>';
 ?>
 
 <!doctype html>
@@ -194,39 +54,40 @@ echo '</pre>';
 
     <main role="main" class="container">
       <div>
-        <?php 
-          $getSheets = $service->spreadsheets->get('1Ygd6cEvi0tcGa3GF11hUIZfomh0Ms9r1mZN-MfcqruE')->getSheets();
-          foreach ($getSheets as $key => $sheet) {
-            echo '<h5>' . $sheet['properties']['title'] . '</h5>';
-            $rangeNew = $sheet['properties']['title']."!B3:Z1001";
-            $getValues = getValues('1Ygd6cEvi0tcGa3GF11hUIZfomh0Ms9r1mZN-MfcqruE', $rangeNew, $service);
-            if ($getValues !== "No data found.") {
-        ?>
-          <div class="table-responsive">
-            <table class="table table-striped table-sm">
-              <thead>
-                <tr>
-                  <th>№</th>
-                  <th>Имя</th>
-                  <th>Время</th>
-                  <th>ЗП</th>
-                  <th>Тег</th>
-                </tr>
-              </thead>
-              <tbody>
-               <?php
-                  
-                  echo $getValues;
-                ?>
-              </tbody>
-            </table>
-          </div>
-        <?php
-            } else {
-              echo $getValues;
-            }
-          }
-        ?>
+        <div class="table-responsive">
+          <table class="table table-striped table-sm">
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>Имя</th>
+                <th>Время</th>
+                <th>ЗП</th>
+                <th>Тег</th>
+              </tr>
+            </thead>
+            <tbody>
+             <?php
+               foreach ($get_result as $row => $value) {      
+                  echo '<tr>';
+                  echo '<td>' . $value[0] . '</td>';
+                  echo '<td>' . $value[1] . '</td>';
+                  echo '<td>' . $value[2] . '</td>';
+                  echo '<td>' . $value[3] . '</td>';
+                  echo '<td>' . $value[4] . '</td>';
+                  echo '</tr>';
+                  $contact = [
+                      $value[0],                
+                      $value[1],                
+                      $value[2],                
+                      $value[3],                
+                      $value[4],                
+                  ];
+                  $g->append($config['googleListId'], 'Sales 3!B3:F', $contact);
+                }
+              ?>
+            </tbody>
+          </table>
+        </div>
       </div>
     </main><!-- /.container -->
     <!-- Optional JavaScript -->
