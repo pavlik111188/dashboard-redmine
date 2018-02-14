@@ -1,99 +1,120 @@
-<?php
-require_once 'common.php';
-
-$g = new GoogleSheets($config['googleAppName'], $config['googleCredentialsFile'], $config['googleClientSecretFile']);
-if (!$g->isReady()) {
-    $_SESSION['auth_url'] = $g->getAuthUrl();
-    header("Location: token.php");
-    die();
-}
-$contact = [
-        1,
-        'Pavlo',
-        'Salo',
-        'Pavlo',
-        'Salo',
-        'Pavlo',
-        'Salo',
-        'subscribed'
-    ];
-// $g->append($config['googleListId'], $config['googleSheetRange'], $contact);
-    $get_result = $g->getRows($config['googleListId'], 'Продажи 1!B3:F');
-
-?>
-
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    <link rel="stylesheet" href="css/style.css">
-
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Dashboard Redmine</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome CSS-->
+    <link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css">
+    <!-- Fontastic Custom icon font-->
+    <link rel="stylesheet" href="css/fontastic.css">
+    <!-- Google fonts - Roboto -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
+    <!-- jQuery Circle-->
+    <link rel="stylesheet" href="css/grasp_mobile_progress_circle-1.0.0.min.css">
+    <!-- Custom Scrollbar-->
+    <link rel="stylesheet" href="vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" href="css/style.default.css" id="theme-stylesheet">
+    <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" href="css/custom.css">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <!-- Tweaks for older IEs--><!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
   </head>
   <body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-      <a class="navbar-brand" href="/">Dashboard Redmine</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
-    <main role="main" class="container">
-      <div>
-        <div class="table-responsive">
-          <table class="table table-striped table-sm">
-            <thead>
-              <tr>
-                <th>№</th>
-                <th>Имя</th>
-                <th>Время</th>
-                <th>ЗП</th>
-                <th>Тег</th>
-              </tr>
-            </thead>
-            <tbody>
-             <?php
-               foreach ($get_result as $row => $value) {      
-                  echo '<tr>';
-                  echo '<td>' . $value[0] . '</td>';
-                  echo '<td>' . $value[1] . '</td>';
-                  echo '<td>' . $value[2] . '</td>';
-                  echo '<td>' . $value[3] . '</td>';
-                  echo '<td>' . $value[4] . '</td>';
-                  echo '</tr>';
-                  $contact = [
-                      $value[0],                
-                      $value[1],                
-                      $value[2],                
-                      $value[3],                
-                      $value[4],                
-                  ];
-                  $g->append($config['googleListId'], 'Sales 3!B3:F', $contact);
-                }
-              ?>
-            </tbody>
-          </table>
+    <?php 
+      require_once 'left-side.php';
+    ?>
+    <div class="page">
+      <?php 
+        require_once 'header.php';
+      ?>
+      <!-- Counts Section -->
+      <section class="dashboard-counts section-padding">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Count item widget-->
+            <div class="col-xl-2 col-md-4 col-6">
+              <div class="wrapper count-title d-flex">
+                <div class="icon"><i class="icon-user"></i></div>
+                <div class="name"><strong class="text-uppercase">New Clients</strong><span>Last 7 days</span>
+                  <div class="count-number">25</div>
+                </div>
+              </div>
+            </div>
+            <!-- Count item widget-->
+            <div class="col-xl-2 col-md-4 col-6">
+              <div class="wrapper count-title d-flex">
+                <div class="icon"><i class="icon-padnote"></i></div>
+                <div class="name"><strong class="text-uppercase">Work Orders</strong><span>Last 5 days</span>
+                  <div class="count-number">400</div>
+                </div>
+              </div>
+            </div>
+            <!-- Count item widget-->
+            <div class="col-xl-2 col-md-4 col-6">
+              <div class="wrapper count-title d-flex">
+                <div class="icon"><i class="icon-check"></i></div>
+                <div class="name"><strong class="text-uppercase">New Quotes</strong><span>Last 2 months</span>
+                  <div class="count-number">342</div>
+                </div>
+              </div>
+            </div>
+            <!-- Count item widget-->
+            <div class="col-xl-2 col-md-4 col-6">
+              <div class="wrapper count-title d-flex">
+                <div class="icon"><i class="icon-bill"></i></div>
+                <div class="name"><strong class="text-uppercase">New Invoices</strong><span>Last 2 days</span>
+                  <div class="count-number">123</div>
+                </div>
+              </div>
+            </div>
+            <!-- Count item widget-->
+            <div class="col-xl-2 col-md-4 col-6">
+              <div class="wrapper count-title d-flex">
+                <div class="icon"><i class="icon-list"></i></div>
+                <div class="name"><strong class="text-uppercase">Open Cases</strong><span>Last 3 months</span>
+                  <div class="count-number">92</div>
+                </div>
+              </div>
+            </div>
+            <!-- Count item widget-->
+            <div class="col-xl-2 col-md-4 col-6">
+              <div class="wrapper count-title d-flex">
+                <div class="icon"><i class="icon-list-1"></i></div>
+                <div class="name"><strong class="text-uppercase">New Cases</strong><span>Last 7 days</span>
+                  <div class="count-number">70</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </main><!-- /.container -->
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+      </section>
+      <!-- Header Section-->
+      
+      <?php 
+        require_once 'footer.php';
+      ?>
+    </div>
+    <!-- Javascript files-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/popper.js/umd/popper.min.js"> </script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="js/grasp_mobile_progress_circle-1.0.0.min.js"></script>
+    <script src="vendor/jquery.cookie/jquery.cookie.js"> </script>
+    <script src="vendor/chart.js/Chart.min.js"></script>
+    <script src="vendor/jquery-validation/jquery.validate.min.js"></script>
+    <script src="vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="js/charts-home.js"></script>
+    <!-- Main File-->
+    <script src="js/front.js"></script>
   </body>
 </html>

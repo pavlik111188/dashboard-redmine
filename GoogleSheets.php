@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: savchenko
- * Date: 25.01.17
- * Time: 16:09
- */
 class GoogleSheets
 {
     protected $appName;
@@ -127,5 +121,11 @@ class GoogleSheets
     {
         $response = $this->getService()->spreadsheets_values->get($listId, $range);
         return $response->getValues();
+    }
+
+    public function getSheets($listId)
+    {
+        $response = $this->getService()->spreadsheets->get($listId)->getSheets();
+        return $response;
     }
 }

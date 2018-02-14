@@ -6,3 +6,5 @@ require_once 'GoogleSheets.php';
 $config = require_once('config.php');
 
 session_start();
+
+$g = new GoogleSheets($config['googleAppName'], $config['googleCredentialsFile'], $config['googleClientSecretFile']);
