@@ -18,6 +18,7 @@
             <li><a href="/"> <i class="icon-home"></i>Home</a></li>
             <li><a href="getData.php"> <i class="icon-grid"></i>Get data</a></li>
             <li><a href="importExport.php"> <i class="icon-grid"></i>Import and Export data</a></li>
+            <li><a href="sendData.php"> <i class="icon-website"></i>Send data from web</a></li>
           </ul>
         </div>
       </div>

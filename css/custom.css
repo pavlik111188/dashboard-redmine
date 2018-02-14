@@ -1,1 +1,8 @@
 /* your styles go here */
+.delete-area {
+	position: absolute;
+	left: -10px;
+}
+.add-row-area {
+	text-align: right;
+}

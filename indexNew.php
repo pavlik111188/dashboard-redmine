@@ -82,7 +82,7 @@ $contact = [
                       $value[3],                
                       $value[4],                
                   ];
-                  $g->append($config['googleListId'], 'Sales 3!B3:F', $contact);
+                  // $g->append($config['googleListId'], 'Sales 3!B3:F', $contact);
                 }
               ?>
             </tbody>

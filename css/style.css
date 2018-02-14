@@ -6,3 +6,6 @@
 	color: #fff;
 	padding: 15px;
 }
+.dynamic-element {
+	position: relative;
+} 
