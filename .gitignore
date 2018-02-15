@@ -1,2 +1,4 @@
 vendor
 composer.lock
+token.json
+client_secret.json
