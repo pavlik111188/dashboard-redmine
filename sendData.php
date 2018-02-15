@@ -55,8 +55,6 @@
                   <h4>Fill the Form</h4>
                 </div>
                 <div class="card-body">
-                  <!-- HIDDEN DYNAMIC ELEMENT TO CLONE -->
-                  <!-- you can replace it with any other elements -->
                   <div class="form-group dynamic-element" style="display:none">
                     <div class="row">                      
                     <!-- Replace these fields -->
@@ -72,21 +70,21 @@
                     <div class="col-md-3">
                       <input type="text" placeholder="Col 4" name="value4" class="form-control" required="">
                     </div>
-                      <!-- End of fields-->
                       <div class="col-md-1 delete-area">
-                        <p class="delete">x</p>
+                        <button type="button" class="close delete" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
                       </div>
                     </div>
                   </div>
-                  <!-- END OF HIDDEN ELEMENT -->
                   <form id="sendData">
                     <div class="form-group">
                       <label>SpreadSheet ID</label>
-                      <input type="text" placeholder="SpreadSheet ID" name="sheetId" class="form-control" required="">
+                      <input type="text" placeholder="SpreadSheet ID" id="sheetId" name="sheetId" class="form-control" required="">
                     </div>
                     <div class="form-group">       
                       <label>Range</label>
-                      <input type="text" placeholder="List!A:Z" name="range" class="form-control" required="">
+                      <input type="text" placeholder="List!A:Z" name="range" id="range" class="form-control" required="">
                     </div>
                     <div class="form-group"> 
                       <h5>Data Inputs</h5>
@@ -95,7 +93,7 @@
                         <!-- You can call clone function once if you want it to show it a first element-->
                       </div>
                       <div class="add-row-area">
-                        <button class="add-one btn btn-secondary">add row</button>
+                        <button type="button" class="add-one btn btn-secondary fa fa-plus"></button>
                       </div>
                     </div>
                     <div class="form-group">       
@@ -126,7 +124,11 @@
     </div>
     <!-- Javascript files-->
     <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/popper.js/umd/popper.min.js"> </script>
     <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="js/grasp_mobile_progress_circle-1.0.0.min.js"></script>
+    <script src="vendor/jquery.cookie/jquery.cookie.js"> </script>
+    <script src="vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
     <!-- Main File-->
     <script src="js/front.js"></script>
   </body>

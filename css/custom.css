@@ -1,7 +1,9 @@
 /* your styles go here */
 .delete-area {
 	position: absolute;
-	left: -10px;
+    left: -10px;
+    width: 41px;
+    padding-top: 6px;
 }
 .add-row-area {
 	text-align: right;
